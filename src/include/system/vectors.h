@@ -35,6 +35,11 @@ typedef struct
 
 typedef struct
 {
+	CPoint points[4];
+} CQuad;
+
+typedef struct
+{
 	CPoint A;
 	CPoint B;
 } CSegment;
@@ -112,7 +117,7 @@ CPoint random_point(float max_x, float max_y, float max_z = 0);
 CPoint noise_point(CPoint p, float noise);
 CVector noise_point(CVector p, float noise);
 
-//bool colliderectA(Tpoint p1, Tbox b1, float angle1, Tpoint p2, Tbox b2, float angle2);
+bool colliderectA(CPoint p1, CBox b1, float angle1, CPoint p2, CBox b2, float angle2);
 
 float DistanceBetweenPoints(CPoint p1, CPoint p2);
 float DistanceBetweenPoints(CVector p1, CVector p2);

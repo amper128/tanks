@@ -31,15 +31,7 @@ public:
 
 	virtual void LoadConfig(string name);
 
-	bool checkCollide(IObjectStatic * coll) {
-		if (!this->solid || !coll->solid) {
-			return false;
-		}
-
-		//TODO: Collide
-
-		return false;
-	}
+	bool checkCollide(IObjectStatic * coll);
 
 	virtual string gettype(void) { return getClassName(); }
 

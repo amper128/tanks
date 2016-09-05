@@ -90,12 +90,9 @@ void CMap::step_objects()
 				coll_body = (*coll_el);
 				if (coll_el != element) {
 					if (DistanceBetweenPoints(body->pos(), coll_body->pos()) <= 256 && coll_body->solid) {
-						//if (coll_body->solid &&
-						//		colliderectA(body->pos(), body->size(), body->angle(),
-						//			     coll_body->pos(), coll_body->size(), coll_body->angle()))
-						//{
-						//	body->collide(coll_body);
-						//}
+						if (body->checkCollide(coll_body)) {
+							body->collide(coll_body);
+						}
 					}
 				}
 				coll_el++;
@@ -108,9 +105,9 @@ void CMap::step_objects()
 
 					do {
 						coll_body_s = (*coll_el_s);
-						//if (coll_body_s->solid && colliderectA(body->pos(),body->size(),body->angle(),coll_body_s->pos(),coll_body_s->size(),coll_body_s->angle())) 						{
-						//	body->collide(coll_body_s);
-						//}
+						if (body->checkCollide(coll_body_s)) {
+							body->collide(coll_body_s);
+						}
 						coll_el_s++;
 					} while (coll_el_s != coll_end_s);
 				}

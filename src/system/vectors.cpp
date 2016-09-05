@@ -7,7 +7,7 @@ CPoint point(float x, float y, float z)
 	p.y = y;
 	p.z = z;
 	return p;
-};
+}
 
 CPoint random_point(float max_x, float max_y, float max_z)
 {
@@ -70,6 +70,49 @@ bool IsLinesCross(CPoint p1_1, CPoint p1_2, CPoint p2_1, CPoint p2_2)
 
 	if ((ch1/zn <= 1 && ch1/zn >= 0) && (ch2/zn <= 1 && ch2/zn >= 0))
 		return true;
+	return false;
+}
+
+bool colliderectA(CPoint p1, CBox b1, float angle1, CPoint p2, CBox b2, float angle2)
+{
+	CQuad q1, q2;
+	int i, j;
+
+	float cos1 = Cos(angle1), cos2 = Cos(angle2);
+	float sin1 = Sin(angle1), sin2 = Sin(angle2);
+
+	b1.w /= 2;
+	b2.w /= 2;
+
+	b1.h /= 2;
+	b2.h /= 2;
+
+	//первый прямоугольник
+	q1.points[0] = point(b1.w*cos1+b1.h*sin1 + p1.x,b1.w*sin1-b1.h*cos1 + p1.y);
+	q1.points[1] = point(b1.w*cos1-b1.h*sin1 + p1.x,b1.w*sin1+b1.h*cos1 + p1.y);
+	q1.points[2] = point(-b1.w*cos1-b1.h*sin1 + p1.x,-b1.w*sin1+b1.h*cos1 + p1.y);
+	q1.points[3] = point(-b1.w*cos1+b1.h*sin1 + p1.x,-b1.w*sin1-b1.h*cos1 + p1.y);
+
+	//второй прямоугольник
+	q2.points[0] = point(b2.w*cos2+b2.h*sin2 + p2.x,b2.w*sin2-b2.h*cos2 + p2.y);
+	q2.points[1] = point(b2.w*cos2-b2.h*sin2 + p2.x,b2.w*sin2+b2.h*cos2 + p2.y);
+	q2.points[2] = point(-b2.w*cos2-b2.h*sin2 + p2.x,-b2.w*sin2+b2.h*cos2 + p2.y);
+	q2.points[3] = point(-b2.w*cos2+b2.h*sin2 + p2.x,-b2.w*sin2-b2.h*cos2 + p2.y);
+
+	for (i = 0; i < 4; i++)
+		for (j = 0; j < 4; j++)
+			if (IsLinesCross(q1.points[i], q1.points[((i+1) % 4)], q2.points[j], q2.points[((j+1) % 4)]))
+				return true;
+
+	for (i = 0; i < 4; i++)
+		for (j = 0; j < 4; j++)
+			if (IsLinesCross(q1.points[i], q1.points[((i+2) % 4)], q2.points[j], q2.points[((j+1) % 4)]))
+				return true;
+
+	for (i = 0; i < 4; i++)
+		for (j = 0; j < 4; j++)
+			if (IsLinesCross(q1.points[i], q1.points[((i+1) % 4)], q2.points[j], q2.points[((j+2) % 4)]))
+				return true;
 	return false;
 }
 

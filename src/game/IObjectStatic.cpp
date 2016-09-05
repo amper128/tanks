@@ -61,6 +61,22 @@ void IObjectStatic::LoadConfig(std::string name)
 	_pos.z = config.ReadFloat(name, "class/zpos");
 }
 
+bool IObjectStatic::checkCollide(IObjectStatic *coll)
+{
+	if (coll == NULL) {
+		return false;
+	}
+
+	if (this->solid && coll->solid) {
+		if (colliderectA(this->pos().to_point(), this->size(), this->angle(),
+				 coll->pos().to_point(), coll->size(), coll->angle())) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 IObjectStatic::~IObjectStatic()
 {
 
