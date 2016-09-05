@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding="utf-8" standalone="yes"?>
+
+<class name="CObjectTree">
+	<texture file="objects/tree.tga">
+		<frames x="1" y="1" default="0"/>
+		<origin x="0" y="0"/>
+	</texture>
+	<solid>False</solid>
+	<flat>True</flat>
+	<size width="192" height="192"/>
+	<zpos>90</zpos>
+	<max_health>1</max_health>
+	<max_armor>0</max_armor>
+</class>

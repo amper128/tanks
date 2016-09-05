@@ -1,9 +1,9 @@
-#include "object_decal.h"
+#include <game/object_decal.h>
 
-Tdecal::Tdecal(Tpoint pos, float angle, float alpha)
+Tdecal::Tdecal(CVector p, float an, float alpha)
 {
-	_pos = pos;
-	_angle = angle;
+	pos(p);
+	angle(an);
 	_alpha = alpha;
 }
 
@@ -11,7 +11,7 @@ void Tdecal::process()
 {
 	_alpha -= 0.0005;
 	if (_alpha < 0)
-		_destroyed = true;
+		destroy();
 }
 
 Tdecal::~Tdecal()

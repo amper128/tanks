@@ -1,60 +1,59 @@
-#include "projectile_bullet.h"
-#include "effects.h"
+#include <game/projectile_bullet.h>
+#include <game/effects.h>
 
-TBullet::TBullet(Tpoint p, float angle, unsigned char type, unsigned char id)
+#include <game/SCFabric.h>
+#include <game/GCVehicleMiddleTank.h>
+
+CProjectileBullet::CProjectileBullet(CVector p)
 {
-	_type = oTypeBullet;
-	_pos = p;
-	_angle = angle;
+	std::string str;
+	TextureManager& TexManager = TextureManager::GetInstance();
+
+	_type = "CProjectile";
+	solid = false;
+	p.z = 5;
+	pos(p);
 	_speed = 15;
 
-	std::string str;
-
 	str = "projectiles/bullet.tga";
-	sprite = TexManager.load(str,point(0,0));
+	sprite = TexManager.load(str, point(0,0));
 
-	_bounds = box(16,16);
+	_size = {16, 16};
 
 	arm_dmg = 20;
 	expl_dmg = 5;
-	_height = 5;
 }
 
-void TBullet::collide(TRigidBodyStatic * coll)
+void CProjectileBullet::collide(IObjectStatic * coll)
 {
-	if (coll->gettype() == oTypeTank || coll->gettype() == oTypeWater)
+	if (!coll->solid) return;
+	if (coll->flat) return;
+	if (coll->gettype() == "CVehicle" && ((TTank*)coll)->pid() == player_id)
 	{
 		return;
-		//if (((TBullet*)coll)->pid() == 1)
-		//{
-		//	return;
-		//}
 	}
 	coll->damage(arm_dmg,expl_dmg);
-//	printf("boom!\n");
+
+//	IObjectStatic* fabric.CreateDynamic();
+/*	CFabric& fabric = CFabric::GetFabric();
+	TExplo* explosion;
+	explosion = (TExplo*)fabric.CreateDynamic("TExplo", _pos);*/
+
+//	explosion = new TExplo(_pos,16,1);
 	destroy();
 }
 
-void TBullet::step()
+void CProjectileBullet::step()
 {
-	process();
+
 }
 
-void TBullet::destroy()
-{
-	_destroyed = true;
-
-	TExplo* explosion;
-	explosion = new TExplo(_pos,16,1);
-	MAP.dynamics.push_back(explosion);
-}
-
-unsigned char TBullet::pid()
+unsigned char CProjectileBullet::pid()
 {
 	return player_id;
 }
 
-bool TBullet::draw()
+bool CProjectileBullet::draw()
 {
 	return false;
 }

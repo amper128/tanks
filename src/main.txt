@@ -1,0 +1,375 @@
+//
+bool keystate[256];
+
+#include <sstream>
+
+#include "main.h"
+#include "graphics/window.cpp"
+
+bool played = false;
+long int times = 0l;
+int elapsed,ticks,delta;
+const int period = 5;
+
+GLfloat angle;
+
+TTank *tank;
+
+bool _full;
+bool light_enable = false;
+
+float fps = 0;
+int fps_timer = 0;
+int fps_st;
+
+int GameMode = 0;
+
+int minutes = 10*60;
+int minute_timer = 20;
+
+bool _paused = false;
+
+int cur_type = 0;
+
+SDL_Event event;
+
+TFont* font1;
+
+//тут main()
+#ifdef _WIN32
+int SDL_main(int argc, char **argv)
+#else
+int main(int argc, char **argv)
+#endif
+{
+	printf("Starting...\n");
+
+	played = true;
+	settings.gm_fullscreen = true;
+	printf("init OpenGL...\n");
+	times = MilliSecs();
+
+	initwnd(1280,680);
+
+	printf("init random seed...\n");
+	srand(MilliSecs());
+
+	grounds = new Texture[16];
+	grounds[0] = LoadSpr("gamedata/textures/grounds/ground.tga");
+	grounds[1] = LoadSpr("gamedata/textures/grounds/grass.tga");
+	grounds[2] = LoadSpr("gamedata/textures/grounds/grass2.tga");
+
+	grounds[8] = LoadSpr("gamedata/textures/grounds/snowy_ground1.tga");
+	grounds[9] = LoadSpr("gamedata/textures/grounds/snowy_ground2.tga");
+	grounds[10] = LoadSpr("gamedata/textures/grounds/snow1.tga");
+	grounds[11] = LoadSpr("gamedata/textures/grounds/snow2.tga");
+	grounds[12] = LoadSpr("gamedata/textures/grounds/ice.tga");
+	grounds[13] = LoadSpr("gamedata/textures/grounds/sand1.tga");
+	grounds[14] = LoadSpr("gamedata/textures/grounds/sand2.tga");
+	grounds[15] = LoadSpr("gamedata/textures/grounds/water.tga");
+
+	decal_spr = LoadSpr("gamedata/textures/decals/trac.tga");
+	tree_spr = LoadSpr("gamedata/textures/objects/tree.tga");
+
+	grid = LoadSpr("gamedata/textures/editor/grid.tga");
+	string str;
+	str = "lights/round.tga";
+	light_omni = TexManager.load(str,point(0,0));
+
+	str = "lights/spot.tga";
+	light_spot = TexManager.load(str,point(0,256));
+
+	MAP.loadmap("jungle");
+
+	font1 = new TFont();
+	font1->LoadFont(string("font1"));
+
+	GameMode = 0;
+
+	if (GameMode == 0)
+	{
+		tank = new TTank;
+		MAP.dynamics.push_back(tank);
+	}
+
+	while (gameloop());
+
+	Quit(0);
+}
+
+void stepgame()
+{
+	if (keys_pressed[VK_F4])
+	{
+		if (_full)
+		{
+			_full = false;
+			SDL_WM_ToggleFullScreen(surface);
+		}
+		else
+		{
+			_full = true;
+			SDL_WM_ToggleFullScreen(surface);
+		}
+	}
+
+	if (keys_pressed[VK_N])
+	{
+		light_enable = !light_enable;
+		render->set_lights(light_enable);
+	}
+
+	if (keys_pressed[VK_P]) _paused = !_paused;
+	if (!_paused)
+	{
+		if (keys_down[VK_W]) tank->setmov(1);
+		else if (keys_down[VK_S]) tank->setmov(2);
+		else tank->setmov(0);
+
+		if (keys_down[VK_D]) tank->setsteer(1);
+		else if (keys_down[VK_A]) tank->setsteer(2);
+		else tank->setsteer(0);
+
+		if (keys_down[VK_F]) tank->kill();
+
+		if (keys_down[VK_LEFT]) tank->setwpnrot(1);
+		else if (keys_down[VK_RIGHT]) tank->setwpnrot(2);
+		else tank->setwpnrot(0);
+
+		if (keys_down[VK_SPACE]) tank->shot();
+
+		if (keys_pressed[VK_L]) tank->set_light(!tank->light());
+
+		if (minutes >= 1440) minutes -=1440;
+		if (minutes < 0) minutes += 1440;
+
+		minute_timer--;
+		if (minute_timer <= 0)
+		{
+			minutes ++;
+			minute_timer = 30;
+		}
+	
+		MAP.step_objects();
+	}
+
+	ViewPort(tank->pos());
+	reset_keystate();
+}
+
+void drawgame()
+{
+	glClearColor(0, 0, 0, 1);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glLoadIdentity();
+
+	DrawLand();
+	if (keys_down[VK_G])
+	{
+		DrawGrid();
+	}
+
+	DrawDecals();
+	DrawObjects();
+
+	render->set_time(minutes);
+	render->render();
+
+	if (_paused)
+	{
+		font1->DrawStringCenter("[ Пауза ]",0,0,color(0,255,0));
+	}
+	else
+	if (!tank->is_alive())
+	{
+		if (tank->kill_timer() <= 500)
+		{
+			font1->DrawStringCenter("Убит!!!",0,0,color(255,0,0,float(1.0f-float(tank->kill_timer())/500.0f)));
+		}
+		else if ((tank->kill_timer() > 1000))
+		{
+			string str;
+			str = "Cтарт через ";
+			str += inttostr((1500-tank->kill_timer())/100+1);
+			str += "...";
+			font1->DrawStringCenter(str,0,0,color(0,255,128));
+		}
+	}
+
+	font1->DrawString(string("fps: ") +ftostr(fps),- window_width/2 + 32, window_height/2 - 32,color(255,255,255,0.5));
+
+	glFlush();
+	SDL_GL_SwapBuffers( );
+}
+
+void stepeditor()
+{
+
+	float x = ViewPos.x;
+	float y = ViewPos.y;
+
+	if (keys_pressed[VK_F4])
+	{
+		if (_full)
+		{
+			_full = false;
+		}
+		else
+		{
+			_full = true;
+		}
+	}
+
+	if (keys_down[VK_LEFT]) x-=16.0f;
+	if (keys_down[VK_RIGHT]) x+=16.0f;
+
+	if (keys_down[VK_UP]) y+=16.0f;
+	if (keys_down[VK_DOWN]) y-=16.0f;
+
+	int mx;
+	int my;
+	int state;
+	if (state = SDL_GetMouseState(&mx, &my))
+	{
+		int cx, cy;
+		cx = (int)(mouse_point.x + ViewPos.x + 32)/64;
+		cy = (int)(mouse_point.y + ViewPos.y + 32)/64;
+
+		if (cx > 0 && cy > 0 && cx < int(MAP.width/64) && cy < int(MAP.height/64))
+		{
+			if (state & SDL_BUTTON(1))
+				MAP.map[cx][cy] = cur_type;
+			else if (state & SDL_BUTTON(3))
+				MAP.map[cx][cy] = 0;
+		}
+	}
+
+	ViewPort(point(x,y));
+	reset_keystate();
+}
+
+void draweditor()
+{
+	glClearColor(0, 0, 0, 1);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glLoadIdentity();
+
+	DrawLand();
+	DrawGrid();
+
+	glColor4f(1.0f,1.0f,1.0f,0.5f);
+	DrawObjects();
+
+	render->set_time(1000);
+	render->set_alpha(0.5f);
+	render->render();
+
+	font1->DrawString("Up, Down, Left, Up: навигация по карте",- window_width/2 + 32, window_height/2 - 32,color(255,255,255,0.5));
+	font1->DrawString("Mouse1: добавить объект",- window_width/2 + 32, window_height/2 - 64,color(255,255,255,0.5));
+	font1->DrawString("Mouse2: удалить объект",- window_width/2 + 32, window_height/2 - 96,color(255,255,255,0.5));
+	font1->DrawString("[: предыдущий тип",- window_width/2 + 32, window_height/2 - 128,color(255,255,255,0.5));
+	font1->DrawString("]: следующий тип",- window_width/2 + 32, window_height/2 - 160,color(255,255,255,0.5));
+	font1->DrawString("L: ландшафт",- window_width/2 + 32, window_height/2 - 192,color(255,255,255,0.5));
+	font1->DrawString("M: объекты",- window_width/2 + 32, window_height/2 - 224,color(255,255,255,0.5));
+
+	glFlush();
+	SDL_GL_SwapBuffers( );
+}
+
+bool gameloop()
+{
+	while ( SDL_PollEvent( &event ) )
+	{
+		switch( event.type )
+		{
+			case SDL_KEYDOWN:
+				press_key( event.key.keysym.sym ,0,0);
+				break;
+			case SDL_KEYUP:
+				up_key( event.key.keysym.sym ,0,0);
+				break;
+			case SDL_MOUSEMOTION:
+				float x;
+				x = event.motion.x;
+				float y;
+				y = event.motion.y;
+				x = (x - window_width/2)/win_to_map_x*2;
+				y = (y - window_height/2)/win_to_map_y*2;
+				mouse_move(x,y);
+				break;
+			case SDL_VIDEORESIZE:
+				ReSizeGLScene(event.resize.w, event.resize.h);
+				break;
+			case SDL_QUIT:
+				return false;
+				break;
+		}
+	}
+	if (keys_pressed[VK_ESCAPE])
+	{
+		return false;
+	}
+
+	if (keys_pressed[VK_F5])
+	{
+		if (GameMode == 0)
+		{
+			GameMode = 1;
+		}
+		else if (GameMode == 1)
+		{
+			GameMode = 0;
+		}
+	}
+
+	if (GameMode == 0)
+	{
+		int oldtime = times;
+		do
+		{
+			elapsed=MilliSecs()-times;
+		} while (!elapsed);
+
+		ticks=elapsed/period;
+
+		for (int k=1; k<ticks; k++)
+		{
+			times=times+period;
+			stepgame();
+		}
+
+		if (fps_timer == 0)
+		{
+			fps_timer = 1;
+			fps = 1000.0f/(MilliSecs() - fps_st);
+			fps_st = MilliSecs();
+		}
+		fps_timer--;
+		drawgame();
+
+		delta = MilliSecs() - oldtime;
+	}
+	else if (GameMode == 1)
+	{
+		
+		int oldtime = times;
+		do
+		{
+			elapsed=MilliSecs()-times;
+		} while (!elapsed);
+
+		ticks=elapsed/period;
+
+		for (int k=1; k<ticks; k++)
+		{
+			times=times+period;
+			stepeditor();
+		}
+
+		draweditor();
+
+		delta = MilliSecs() - oldtime;
+	}
+
+	return true;
+}

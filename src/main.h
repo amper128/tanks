@@ -4,34 +4,41 @@
 #include <GL/glew.h>
 
 //ядро движка
-#include "system/system.cpp"
-#include "system/vectors.cpp"
+#include "system/system.h"
+#include "system/vectors.h"
 
-#include "global.cpp"
-#include "game/map.cpp"
+#include "global.h"
+#include "game/SCMap.h"
 
-#include "graphics/tga.cpp"
-#include "graphics/graphics.cpp"
-#include "graphics/render_manager.cpp"
+#include "graphics/tga.h"
+#include "graphics/graphics.h"
+#include "graphics/render_manager.h"
+#include "graphics/fonts.h"
 
-#include "game/rigid_body_static.cpp"
-#include "game/object_water.cpp"
-#include "game/wall_brick.cpp"
-#include "game/wall_beton.cpp"
+//#include "graphics/window.h"
 
-#include "game/object_2d.cpp"
-#include "game/object_decal.cpp"
-#include "game/object_tree.cpp"
+#include "gui/GUI.h"
 
-#include "game/effects.cpp"
+/*//основные интерфейсы объектов
+#include "game/IObjectBase.h"
+#include "game/IObject2D.h"
+#include "game/IObjectStatic.h"
+#include "game/IObjectDynamic.h"
+#include "game/IVehicleBase.h"
 
-#include "game/rigid_body_dynamic.cpp"
-#include "game/object_tank.cpp"
-#include "game/projectile_bullet.cpp"
-#include "game/projectile_fire.cpp"
+//типы объектов
+#include "game/GCObjectWater.h"
+#include "game/GCObjectBrick.h"
+#include "game/GCObjectBeton.h"
 
-//#include "game/game.cpp"
+//FIXME: rename files
+#include "game/object_decal.h"
+#include "game/GCObjectTree.h"
 
-void stepgame();
-void drawgame();
-bool gameloop();
+#include "game/effects.h"
+
+#include "game/GCVehicleMiddleTank.h"
+#include "game/projectile_bullet.h"
+#include "game/projectile_fire.h"
+
+//#include "game/game.cpp"*/

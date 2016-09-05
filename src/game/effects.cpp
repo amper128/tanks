@@ -1,117 +1,114 @@
-#include "effects.h"
+#include <game/effects.h>
 
-TExplo::TExplo(Tpoint pos, unsigned char dmg, unsigned char id)
+TExplo::TExplo(CVector p, uint8_t dmg, uint8_t id)
 {
-	_pos = pos;
-	std::string str;
-	str = "effects/explosion_2.tga";
-	sprite = TexManager.load(str,point(0,0),4,4);
-	sprite->frame = 0;
-	_bounds = box(16,16);
-	_height = 110;
+	TextureManager& TexManager = TextureManager::GetInstance();
+	std::string str = "effects/explosion_2.tga";
 
-	cur_dmg = 80;
+	this->_pos = p;
+	this->_pos.z = 110.0f;
 
-	_angle = float(rand() % 3600) / 10.0f;
-	lightning = 0;
+	this->sprite = TexManager.load(str, point(0,0), 4, 4);
+	this->sprite->frame = 0;
+	this->_size = {16, 16};
+
+	this->cur_dmg = 80;
+
+	this->_angle = float(rand() % 3600) / 10.0f;
+	this->lightning = 0;
 }
 
-void TExplo::step()
+void TExplo::step(void)
 {
-	cur_dmg--;
-	if (cur_dmg > 0)
-	{
-		_tmr++;
-		if (_tmr >= 5)
-		{
-			sprite->frame++;
-			_tmr = 0;
-		}
-		_bounds = box(96-cur_dmg,96-cur_dmg);
+	this->cur_dmg--;
+	if (this->cur_dmg > 0) {
+		this->_tmr++;
 
-		if (sprite->frame < 5)
-		{
-			lightning += 0.05;
+		if (this->_tmr >= 5) {
+			this->sprite->frame++;
+			this->_tmr = 0;
 		}
-		else
-		{
-			lightning -= 0.03;
+
+		this->size({96.0f - this->cur_dmg, 96.0f - this->cur_dmg});
+
+		if (this->sprite->frame < 5) {
+			this->lightning += 0.05;
+		} else {
+			this->lightning -= 0.03;
 		}
+	} else {
+		this->destroy();
 	}
-	else
-	{
-		_destroyed = true;
-	}
-	
+
 }
 
-void TExplo::collide(TRigidBodyStatic* body)
+void TExplo::collide(IObjectStatic* body)
 {
-	body->damage(0,1);
-//	printf("oops!\n");
+	body->damage(0, 1);
 }
 
-bool TExplo::draw()
+bool TExplo::draw(void)
 {
-	render.draw(sprite, _pos, box(128,128), _angle, _height,1.0f,1);
-	render.draw_light(light_omni,_pos,box(128,128),0,colori(250,158,11,lightning*255));
+	CRenderManager& render = CRenderManager::GetInstance();
+	render.draw(this->sprite, this->_pos, CBox({128.0f, 128.0f}), this->_angle, 1.0f, 1);
+//	render.draw_light(light_omni,_pos,box(128,128),0,colori(250,158,11,lightning*255));
+
 	return true;
 }
 
-TExplo2::TExplo2(Tpoint pos, unsigned char dmg, unsigned char id)
+TExplo2::TExplo2(CVector p, uint8_t dmg, uint8_t id)
 {
-	_pos = pos;
-	std::string str;
-	str = "effects/explosion_1.tga";
-	sprite = TexManager.load(str,point(0,0),4,4);
-	sprite->frame = 0;
-	_bounds = box(16,16);
-	_height = 110;
+	TextureManager& TexManager = TextureManager::GetInstance();
+	std::string str = "effects/explosion_1.tga";
 
-	cur_dmg = 160;
+	this->_pos = p;
+	this->_pos.z = 110.0f;
 
-	_angle = float(rand() % 3600) / 10.0f;
-	lightning = 0;
+	this->sprite = TexManager.load(str, point(0,0), 4, 4);
+	this->sprite->frame = 0;
+	this->_size = {16.0f, 16.0f};
+
+	this->cur_dmg = 160;
+
+	this->_angle = float(rand() % 3600) / 10.0f;
+	this->lightning = 0;
 }
 
 void TExplo2::step()
 {
-	cur_dmg--;
-	if (sprite->frame <15 && cur_dmg >= 0)
-	{
-		_tmr++;
-		if (_tmr >= 10)
-		{
-			sprite->frame++;
-			_tmr = 0;
-		}
-		_bounds = box(160-cur_dmg,160-cur_dmg);
+	this->cur_dmg--;
 
-		if (sprite->frame < 5)
-		{
-			lightning += 0.025;
+	if (this->sprite->frame < 15 && this->cur_dmg >= 0) {
+		this->_tmr++;
+
+		if (this->_tmr >= 10) {
+			this->sprite->frame++;
+			this->_tmr = 0;
 		}
-		else
-		{
-			lightning -= 0.015;
+		this->_size = {160.0f - this->cur_dmg, 160.0f - this->cur_dmg};
+
+		if (this->sprite->frame < 5) {
+			this->lightning += 0.025;
+		} else {
+			this->lightning -= 0.015;
 		}
+	} else {
+		this->destroy();
 	}
-	else
-	{
-		destroy();
-	}
-	
+
 }
 
-void TExplo2::collide(TRigidBodyStatic* body)
+void TExplo2::collide(IObjectStatic* body)
 {
-	body->damage(0,2);
+	body->damage(0, 2);
 //	printf("oops!\n");
 }
 
 bool TExplo2::draw()
 {
-	render.draw(sprite, _pos, box(192,192), _angle, _height,1.0f,1);
-	render.draw_light(light_omni,_pos,box(192,192),0,colori(255,158,11,lightning*255));
+	CRenderManager& render = CRenderManager::GetInstance();
+	render.draw(this->sprite, this->_pos, {192, 192}, this->_angle, 1.0f, 1);
+//	render.draw_light(light_omni,_pos,box(192,192),0,colori(255,158,11,lightning*255));
+
 	return true;
 }

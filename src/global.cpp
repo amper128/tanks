@@ -1,19 +1,8 @@
-//#include "object_tank.h"
-//#include "wall.h"
 #include <cstdio>
-#include "system/vectors.cpp"
+#include "system/vectors.h"
 #include <unistd.h>
 #include <iostream>
 #include "global.h"
-
-const int oWallBeton = 1;
-const int oWallBrick = 2;
-
-const int oWater = 10;
-const int oTree = 20;
-
-const int oStart1 = 100;
-const int oStart2 = 101;
 
 /*
 class TPlayer

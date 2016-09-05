@@ -1,127 +1,70 @@
-#pragma once
+#include <system/vectors.h>
 
-#include "vectors.h"
-
-Tvector::Tvector()
+CPoint point(float x, float y, float z)
 {
-	_x = 0;
-	_y = 0;
-}
-
-Tvector::Tvector(float x, float y)
-{
-	_x = x;
-	_y = y;
-}
-
-Tvector::Tvector(Tpoint point)
-{
-	_x = point.x;
-	_y = point.y;
-}
-
-float Tvector::length()
-{
-	return sqrt(_x*_x + _y*_y);
-}
-
-void Tvector::set_length(float len)
-{
-	float l = sqrt(_x*_x + _y*_y);
-	if (l != 0)
-	{
-		printf("%.2f\n",len);
-		Tvector tmp = get_norm()*len;
-		//printf("%.2f, %.2f\n",tmp.x(),tmp.y());
-		_x = tmp.x();
-		_y = tmp.y();
-		//printf("%.2f, %.2f\n",_x,_y);
-	}
-	else
-	{
-		_x = len*cos(_angle*DEG_TO_RAD);
-		_y = len*sin(_angle*DEG_TO_RAD);
-	}
-}
-
-Tvector Tvector::get_norm()
-{
-	float len = sqrt(_x*_x + _y*_y);
-	if (len != 0)
-	{
-		float inv_length = 1.0f / len;
-		return (*this * inv_length);
-	}
-	return (*this * 0);
-}
-
-Tvector Tvector::normalize()
-{
-	float len = sqrt(_x*_x + _y*_y);
-	if (len != 0)
-	{
-		Tvector vect(_x/len,_y/len);
-		return vect;
-	}
-	return (*this * 0);
-}
-
-float Tvector::get_angle()
-{
-	return _angle;
-}
-
-void Tvector::set_angle(float angle)
-{
-	_angle = angle;
-	float len = sqrt(_x*_x + _y*_y);
-	_x = len*cos(_angle*DEG_TO_RAD);
-	_y = len*sin(_angle*DEG_TO_RAD);
-}
-
-Tvector Tvector::operator+(Tvector vect)
-{
-	Tvector v(_x+vect.x(), _y+vect.y());
-	return v;
+	CPoint p;
+	p.x = x;
+	p.y = y;
+	p.z = z;
+	return p;
 };
 
-Tvector Tvector::operator-(Tvector vect)
+CPoint random_point(float max_x, float max_y, float max_z)
 {
-	Tvector v(_x-vect.x(), _y-vect.y());
-	return v;
-};
-
-Tvector Tvector::operator*(float value)
-{
-	Tvector vect(_x*value, _y*value);
-	return vect;
-};
-
-Tvector Tvector::operator/(float value)
-{
-	if (value > 0)
-	{
-		Tvector vect(_x/value, _y/value);
-		return vect;
-	}
-	//а что делать если все же 0?
-};
-
-float Tvector::operator*(Tvector vect)
-{
-	return _x*vect.x() + _y*vect.y();
+	CPoint p;
+	p.x = frand() * max_x;
+	p.y = frand() * max_y;
+	p.z = frand() * max_z;
+	return p;
 }
 
-Tvector::~Tvector()
+CPoint noise_point(CPoint p, float noise)
 {
+	CPoint n;
 
+	n = p;
+
+	n.x += (frand() - 0.5f) * noise;
+	n.y += (frand() - 0.5f) * noise;
+	n.z += (frand() - 0.5f) * noise;
+
+	return n;
 }
 
-bool IsLinesCross(Tsegment s1, Tsegment s2)
+CVector noise_point(CVector p, float noise)
 {
-	float zn = (s2.B.y-s2.A.y)*(s1.B.x-s1.A.x) - (s2.B.x-s2.A.x)*(s1.B.y-s1.A.y);
-	float ch1 = (s2.B.x-s2.A.x)*(s1.A.y-s2.A.y) - (s2.B.y-s2.A.y)*(s1.A.x-s2.A.x);
-	float ch2 = (s1.B.x-s1.A.x)*(s1.A.y-s2.A.y) - (s1.B.y-s1.A.y)*(s1.A.x-s2.A.x);
+	CVector n;
+
+	n = p;
+
+	n.x += (frand() - 0.5f) * noise;
+	n.y += (frand() - 0.5f) * noise;
+	n.z += (frand() - 0.5f) * noise;
+
+	return n;
+}
+
+/*Tbox box(float w, float h)
+{
+	Tbox b;
+	b.w = w;
+	b.h = h;
+	return b;
+};*/
+
+CSegment segment(CPoint A, CPoint B)
+{
+	CSegment s;
+	s.A = A;
+	s.B = B;
+	return s;
+}
+
+bool IsLinesCross(CPoint p1_1, CPoint p1_2, CPoint p2_1, CPoint p2_2)
+{
+	float zn = (p2_2.y-p2_1.y)*(p1_2.x-p1_1.x) - (p2_2.x-p2_1.x)*(p1_2.y-p1_1.y);
+	float ch1 = (p2_2.x-p2_1.x)*(p1_1.y-p2_1.y) - (p2_2.y-p2_1.y)*(p1_1.x-p2_1.x);
+	float ch2 = (p1_2.x-p1_1.x)*(p1_1.y-p2_1.y) - (p1_2.y-p1_1.y)*(p1_1.x-p2_1.x);
 
 	if (zn == 0) return false;
 
@@ -130,58 +73,253 @@ bool IsLinesCross(Tsegment s1, Tsegment s2)
 	return false;
 }
 
-//TODO: оптимизировать тут надо бы
-bool colliderectA(Tpoint p1, Tbox b1, float angle1, Tpoint p2, Tbox b2, float angle2)
-{
-	float cos1 = Cos(angle1), cos2 = Cos(angle2);
-	float sin1 = Sin(angle1), sin2 = Sin(angle2);
-
-	b1.w /= 2;
-	b2.w /= 2;
-
-	b1.h /= 2;
-	b2.h /= 2;
-
-	Tquad q1,q2;
-
-	//первый прямоугольник
-	q1.points[0] = point(b1.w*cos1+b1.h*sin1 + p1.x,b1.w*sin1-b1.h*cos1 + p1.y);
-	q1.points[1] = point(b1.w*cos1-b1.h*sin1 + p1.x,b1.w*sin1+b1.h*cos1 + p1.y);
-	q1.points[2] = point(-b1.w*cos1-b1.h*sin1 + p1.x,-b1.w*sin1+b1.h*cos1 + p1.y);
-	q1.points[3] = point(-b1.w*cos1+b1.h*sin1 + p1.x,-b1.w*sin1-b1.h*cos1 + p1.y);
-
-	//второй прямоугольник
-	q2.points[0] = point(b2.w*cos2+b2.h*sin2 + p2.x,b2.w*sin2-b2.h*cos2 + p2.y);
-	q2.points[1] = point(b2.w*cos2-b2.h*sin2 + p2.x,b2.w*sin2+b2.h*cos2 + p2.y);
-	q2.points[2] = point(-b2.w*cos2-b2.h*sin2 + p2.x,-b2.w*sin2+b2.h*cos2 + p2.y);
-	q2.points[3] = point(-b2.w*cos2+b2.h*sin2 + p2.x,-b2.w*sin2-b2.h*cos2 + p2.y);
-
-	char i,j;
-	for (i=0;i<4;i++)
-		for (j=0;j<4;j++)
-			if (IsLinesCross(segment(q1.points[i],q1.points[((i+1) % 4)]),segment(q2.points[j],q2.points[((j+1) % 4)]))) return true;
-
-	for (i=0;i<4;i++)
-		for (j=0;j<4;j++)
-			if (IsLinesCross(segment(q1.points[i],q1.points[((i+2) % 4)]),segment(q2.points[j],q2.points[((j+1) % 4)]))) return true;
-
-	for (i=0;i<4;i++)
-		for (j=0;j<4;j++)
-			if (IsLinesCross(segment(q1.points[i],q1.points[((i+1) % 4)]),segment(q2.points[j],q2.points[((j+2) % 4)]))) return true;
-	return false;
-}
-
 float DegreesBetweenPoints(float X1, float Y1, float X2, float Y2)
 {
 	return atan2f(X2 - X1,-(Y2 - Y1)) * RAD_TO_DEG;
 }
 
-float DegreesBetweenPoints(Tpoint pos1, Tpoint pos2)
+float DegreesBetweenPoints(CPoint pos1, CPoint pos2)
 {
 	return atan2f(-(pos2.x - pos1.x),(pos2.y - pos1.y)) * RAD_TO_DEG;
 }
 
-float DistanceBetweenPoints(Tpoint p1, Tpoint p2)
+float DistanceBetweenPoints(CPoint p1, CPoint p2)
 {
 	return sqrt((p2.x - p1.x)*(p2.x - p1.x) + (p2.y - p1.y)*(p2.y - p1.y));
+}
+
+float DistanceBetweenPoints(CVector p1, CVector p2)
+{
+	return sqrt((p2.x - p1.x)*(p2.x - p1.x) + (p2.y - p1.y)*(p2.y - p1.y));
+}
+
+float frand()
+{
+	return (float)rand()/RAND_MAX;
+}
+
+float Cos(float x)
+{
+	return cos(x*DEG_TO_RAD);
+}
+
+float Sin(float x)
+{
+	return sin(x*DEG_TO_RAD);
+}
+
+
+//========================================
+//
+//	Векторная математика
+//
+//========================================
+
+CVector::CVector(float nx, float ny, float nz)
+{
+	x = nx;
+	y = ny;
+	z = nz;
+}
+
+float CVector::len()
+{
+	return sqrt(x * x + y * y + z * z);
+}
+
+float CVector::dir()
+{
+	return atan2(x, y) * RAD_TO_DEG;
+}
+
+CPoint CVector::to_point()
+{
+	return point(x, y, z);
+}
+
+CVector CVector::operator+(const CVector& vec)
+{
+	return CVector(x + vec.x, y + vec.y, z + vec.z);
+}
+
+CVector CVector::operator-(const CVector& vec)
+{
+	return CVector(x - vec.x, y - vec.y, z - vec.z);
+}
+
+CVector CVector::operator+(const CPoint& p)
+{
+	return CVector(x + p.x, y + p.y, z + p.z);
+}
+
+CVector CVector::operator-(const CPoint& p)
+{
+	return CVector(x - p.x, y - p.y, z - p.z);
+}
+
+CVector CVector::operator*(float val)
+{
+	return CVector(x * val, y * val, z * val);
+}
+
+CVector CVector::operator/(float val)
+{
+	return CVector(x / val, y / val, z / val);
+}
+
+CVector CVector::operator=(const CPoint& p)
+{
+	return CVector(p.x, p.y, p.z);
+}
+
+CVector& CVector::operator+=(const CVector& vec)
+{
+	x += vec.x;
+	y += vec.y;
+	//z += vec.z;
+
+	return *this;
+}
+
+CVector& CVector::operator-=(const CVector& vec)
+{
+	x -= vec.x;
+	y -= vec.y;
+	//z -= vec.z;
+
+	return *this;
+}
+
+CVector& CVector::operator+=(const CPoint& p)
+{
+	x += p.x;
+	y += p.y;
+	//z += p.z;
+
+	return *this;
+}
+
+CVector& CVector::operator-=(const CPoint& p)
+{
+	x -= p.x;
+	y -= p.y;
+	//z -= p.z;
+
+	return *this;
+}
+
+CVector& CVector::operator*=(float val)
+{
+	x *= val;
+	y *= val;
+	//z *= val;
+
+	return *this;
+}
+
+CVector& CVector::operator/=(float val)
+{
+	x /= val;
+	y /= val;
+	//z /= val;
+
+	return *this;
+}
+
+bool CVector::operator==(const CVector& vec)
+{
+	return x == vec.x && y == vec.y && z == vec.z;
+}
+
+CVector::~CVector()
+{
+
+}
+
+///
+///    полигоны
+///
+///
+
+CPoly::CPoly()
+{
+	vertex_count = 0;
+	vertex_arr = new CPoint[vertex_count];
+	vertex_arr_t = new CPoint[vertex_count];
+	radius = 0;
+}
+
+CPoly::CPoly(CPoint pos)
+{
+	vertex_count = 0;
+	vertex_arr = new CPoint[vertex_count];
+	vertex_arr_t = new CPoint[vertex_count];
+	radius = 0;
+	_pos.x = pos.x;
+	_pos.y = pos.y;
+	_pos.z = pos.z;
+}
+
+void CPoly::AddVertex(float x, float y)
+{
+	CPoint* tmp_arr = new CPoint[vertex_count+1];
+	for (uint8_t i = 0; i < vertex_count; i++) {
+		tmp_arr[i] = vertex_arr[i];
+	}
+	delete vertex_arr;
+	delete vertex_arr_t;
+
+	vertex_arr = tmp_arr;
+	vertex_count++;
+
+	vertex_arr[vertex_count] = point(x,y);
+	vertex_arr_t = new CPoint[vertex_count];
+
+	if (sqrt(x*x + y*y) > radius)
+		radius = sqrt(x*x + y*y);
+}
+
+void CPoly::rotate(float angle)
+{
+	float x;
+	float y;
+
+	_angle = angle;
+
+	for (uint8_t i = 0; i < vertex_count; i++) {
+		x = vertex_arr[i].x;
+		y = vertex_arr[i].y;
+		vertex_arr_t[i].x = x * Cos(angle) + y * Sin(angle) + _pos.x;
+		vertex_arr_t[i].y = x * Sin(angle) - y * Cos(angle) + _pos.y;
+	}
+}
+
+void CPoly::move(CVector pos)
+{
+	float dx, dy;
+
+	dx = _pos.x - pos.x;
+	dy = _pos.y - pos.y;
+	_pos = pos;
+
+	for (uint8_t i = 0; i < vertex_count; i++) {
+		vertex_arr_t[i].x += dx;
+		vertex_arr_t[i].y += dy;
+	}
+}
+
+CVector CPoly::pos()
+{
+	return _pos;
+}
+
+float CPoly::angle()
+{
+	return _angle;
+}
+
+CPoly::~CPoly()
+{
+	delete vertex_arr;
+	delete vertex_arr_t;
 }

@@ -1,0 +1,2 @@
+#include <game/CObjectLight.h>
+

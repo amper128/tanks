@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding="utf-8" standalone="yes"?>
+
+<class name="CObjectWater">
+	<texture file="notexture.tga">
+		<frames x="1" y="1" default="0"/>
+		<origin x="0" y="0"/>
+	</texture>
+	<solid>True</solid>
+	<flat>True</flat>
+	<size width="64" height="64"/>
+	<zpos>0</zpos>
+	<max_health>1</max_health>
+	<max_armor>0</max_armor>
+</class>

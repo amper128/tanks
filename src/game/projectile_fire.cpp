@@ -1,99 +1,97 @@
-#include "projectile_bullet.h"
-#include "effects.h"
+#include <game/projectile_fire.h>
+#include <game/effects.h>
+#include <game/GCVehicleMiddleTank.h>
 
-TProjectileFire::TProjectileFire(Tpoint p, float angle, unsigned char type, unsigned char id)
+#include <system/strings.h>
+
+static Sprite* light_omni;
+//static Sprite* light_spot;
+
+CProjectileFire::CProjectileFire(CVector p)
 {
-	_type = oTypeBullet;
-	_pos = p;
-	_angle = angle;
-	_speed = 5;
+	TextureManager& TexManager = TextureManager::GetInstance();
+	string str;
 
-	std::string str;
+	this->_type = "CProjectile";
+	this->solid = false;
+	this->_pos = p;
+	this->_pos.z = 5;
+	this->_speed = 5;
 
 	str = "projectiles/fire.tga";
-	sprite = TexManager.load(str,point(0,0),2,2);
+	this->sprite = TexManager.load(str, point(0,0), 2, 2);
+	this->_size = {20.0f, 20.0f};
 
-	_bounds = box(24,24);
+	this->arm_dmg = 0.1f;
+	this->expl_dmg = 0.1f;
+	this->fire_dmg = 10;
 
-	arm_dmg = 0.1f;
-	expl_dmg = 1.0f;
-	fire_dmg = 10;
-	_height = 5;
+	this->life_time = 120;
+	this->fire_time = 200;
+	this->_act = 0;
+	this->tex_angle = frand() * 360.0f;
 
-	life_time = 100;
-	fire_time = 50;
-	_act = 0;
-	_angle2 = float(rand()%3600)/10.0f;
+
+	if (!light_omni) {
+		light_omni = TexManager.load("lights/round.tga", point(0,0));
+	}
 }
 
-void TProjectileFire::collide(TRigidBodyStatic * coll)
+void CProjectileFire::collide(IObjectStatic * coll)
 {
-	if (coll->gettype() == oTypeTank || coll->gettype() == oTypeWater)
-	{
+	if (coll->flat) {
 		return;
-		//if (((TProjectileFire*)coll)->pid() == 1)
-		//{
-		//	return;
-		//}
 	}
-	if (_act == 0)
-	{
+
+	if (_act == 0) {
+		//if (coll->gettype() == "CVehicle" && ((TTank*)coll)->pid() == player_id)
+		//	return;
 		_act = 1;
 		_speed = 0;
 	}
-	coll->damage(arm_dmg,expl_dmg);
-	
-//	printf("boom!\n");
-//	destroy();
+	coll->damage(arm_dmg, expl_dmg);
 }
 
-void TProjectileFire::step()
+void CProjectileFire::step()
 {
 	_tmr++;
-	if (_tmr >= 10)
-	{
+	if (_tmr >= 10) {
 		sprite->frame++;
 		_tmr = 0;
 	}
-	if (_height < 110)
-		_height++;
-	if (_bounds.w < 64)
-	{
-		_bounds.w++;
-		_bounds.h++;
+	if (_pos.z < 120) {
+		_pos.z++;
 	}
-	if (_act == 0)
-	{
+	if (_size.w < 64) {
+		_size.w+=0.5;
+		_size.h+=0.5;
+	}
+	if (_act == 0) {
 		_alpha -= 0.02f;
 		if (_alpha <= 0)
 			destroy();
 		process();
-	}
-	else if (_act == 1)
-	{
+	} else if (_act == 1) {
 		fire_time--;
-		if (fire_time < 200)
-		{
-			_alpha -= 0.005f;
+		if (fire_time < 200) {
+			_alpha -= 0.003f;
 		}
-		if (_alpha <= 0)
+		if (_alpha <= 0) {
 			destroy();
+		}
 	}
+
+	arm_dmg = 0.1*_alpha;
+	expl_dmg = 0.1*_alpha;
+	fire_dmg = 0.1*_alpha;
 }
 
-void TProjectileFire::destroy()
+bool CProjectileFire::draw(void)
 {
-	_destroyed = true;
-}
+	CRenderManager& render = CRenderManager::GetInstance();
 
-unsigned char TProjectileFire::pid()
-{
-	return player_id;
-}
+	render.draw(this->sprite, this->_pos, {this->_size.w * 2, this->_size.h * 2}, this->tex_angle, this->_alpha, 1);
+	render.draw_light(light_omni, this->_pos, {this->_size.w * 2, this->_size.h * 2}, 0, colori(252, 148, 4, this->_alpha * 255));
 
-bool TProjectileFire::draw()
-{
-	render.draw(sprite, _pos, box(_bounds.w*2,_bounds.h*2), _angle2, _height,_alpha,1);
-	render.draw_light(light_omni,_pos,box(_bounds.w*2,_bounds.h*2),0,colori(252,148,4,_alpha*255));
 	return true;
 }

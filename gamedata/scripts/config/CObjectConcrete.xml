@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding="utf-8" standalone="yes"?>
+
+<class name="CObjectConcrete">
+	<texture file="walls/walls.tga">
+		<frames x="4" y="4" default="8"/>
+		<origin x="0" y="0"/>
+	</texture>
+	<solid>True</solid>
+	<flat>False</flat>
+	<size width="64" height="64"/>
+	<zpos>10</zpos>
+	<max_health>100</max_health>
+	<max_armor>0</max_armor>
+</class>
