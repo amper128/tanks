@@ -33,12 +33,13 @@ Texture LoadSpr(std::string filename)
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST_MIPMAP_LINEAR);
 		glTexImage2D(GL_TEXTURE_2D, 0, tmp_spr.bpp / 8, tmp_spr.width, tmp_spr.height, 0, tmp_spr.type, GL_UNSIGNED_BYTE, tmp_spr.imageData);
 		std::cout << "\n";
-		return tmp_spr;
 	}
 	else
 	{
 		printf("texture not loaded!\n");
 	}
+
+	return tmp_spr;
 }
 
 /*void DrawGrid()

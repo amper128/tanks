@@ -35,12 +35,12 @@ void CXMLConfig::UnLoadXML(std::string file)
 pugi::xml_node CXMLConfig::ReadNode(std::string file, std::string path)
 {
 	std::vector<std::string> p;
-	p = split(path,'/');
-
 	pugi::xml_node node;
+
+	p = split(path,'/');
 	node = configs[file].doc->child(p[0].c_str());
 
-	for (char i = 1; i < p.size(); i++) {
+	for (size_t i = 1; i < p.size(); i++) {
 		node = node.child(p[i].c_str());
 	}
 	return node;
