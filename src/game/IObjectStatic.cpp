@@ -68,6 +68,9 @@ bool IObjectStatic::checkCollide(IObjectStatic *coll)
 	}
 
 	if (this->solid && coll->solid) {
+
+		std::cout << "check collide\n";
+
 		if (colliderectA(this->pos().to_point(), this->size(), this->angle(),
 				 coll->pos().to_point(), coll->size(), coll->angle())) {
 			return true;

@@ -40,7 +40,7 @@ void CGame::start()
 	pause_label->setcolor(color(0, 255, 0, 1));
 
 	level = new CMap();
-	level->loadmap("level13");
+	level->loadmap("level01");
 
 	fabric->setmap(level);
 
@@ -48,6 +48,10 @@ void CGame::start()
 
 	tank = new TTank;
 	level->dynamics.push_back(tank);
+
+	/*tank2 = new TTank;
+	tank2->pos(CVector(384, 64));
+	level->dynamics.push_back(tank2);*/
 
 	font2 = new TFont();
 	font2->LoadFont(string("font2"));

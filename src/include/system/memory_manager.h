@@ -17,17 +17,18 @@ class CMemoryManager
 		~MemBlock(void);
 
 		void* allocate(size_t);
-		const size_t size(void) const;
+		size_t size(void) const;
 
-		const size_t remaining(void) const;
+		size_t remaining(void) const;
+
+		MemBlock(const MemBlock& cp);
+		MemBlock& operator = (const MemBlock& cp);
+
 	private:
 		unsigned char* m_block;		//указатель на область памяти, где оно лежит
 		size_t m_remain;	//скока еще свободно
 		size_t m_size;		//какой размер блока вообще
 		size_t m_curr;		//скока занято
-
-		MemBlock(const MemBlock& cp);
-		MemBlock& operator = (const MemBlock& cp);
 	};
 
 	//ячейка памяти

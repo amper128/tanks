@@ -48,7 +48,7 @@ bool LoadUncompressedTGA(Texture * texture, std::string filename, FILE * fTGA)		
 {											// TGA Loading code nehe.gamedev.net)
 	if(fread(tga.header, sizeof(tga.header), 1, fTGA) == 0)				// Read TGA header
 	{
-		printf("Could not read info header");	// Display error
+		printf("Could not read info header from %s", filename.c_str());		// Display error
 		if(fTGA != NULL)							// if file is still open
 		{
 			fclose(fTGA);							// Close it
@@ -91,7 +91,7 @@ bool LoadUncompressedTGA(Texture * texture, std::string filename, FILE * fTGA)		
 
 	if(fread(texture->imageData, 1, tga.imageSize, fTGA) != tga.imageSize)		// Attempt to read image data
 	{
-		printf("Could not read image data");	// Display Error
+		printf("Could not read image data from %s", filename.c_str());		// Display Error
 		if(texture->imageData != NULL)						// If imagedata has data in it
 		{
 			free(texture->imageData);					// Delete data from memory
@@ -115,7 +115,7 @@ bool LoadCompressedTGA(Texture * texture, std::string filename, FILE * fTGA)			/
 {
 	if(fread(tga.header, sizeof(tga.header), 1, fTGA) == 0)				// Attempt to read header
 	{
-		printf("Could not read info header");	// Display Error
+		printf("Could not read info header from %s", filename.c_str());		// Display error
 		if(fTGA != NULL)							// If file is open
 		{
 			fclose(fTGA);							// Close it

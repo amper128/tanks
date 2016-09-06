@@ -23,10 +23,10 @@ public:
 	bool	solid;
 	bool	flat;
 
-	virtual void collide(IObjectStatic * coll) {}
+	virtual void collide(IObjectStatic *) {}
 	virtual void step(void) {}
 	virtual void destroy(void) { _destroyed = true; }
-	virtual void damage(float dmg1 = 0, float dmg2 = 0, float dmg3 = 0) {}
+	virtual void damage(float, float, float) {}
 	std::string getClassName(void) { return "CObjectStatic"; }
 
 	virtual void LoadConfig(string name);

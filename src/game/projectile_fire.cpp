@@ -49,7 +49,7 @@ void CProjectileFire::collide(IObjectStatic * coll)
 		_act = 1;
 		_speed = 0;
 	}
-	coll->damage(arm_dmg, expl_dmg);
+	coll->damage(arm_dmg, expl_dmg, 0.0f);
 }
 
 void CProjectileFire::step()

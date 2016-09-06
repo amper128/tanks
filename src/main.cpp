@@ -4,7 +4,7 @@
 #ifdef _WIN32
 int SDL_main(int argc, char **argv)
 #else
-int main(int argc, char **argv)
+int main(/*int argc, char **argv*/)
 #endif
 {
 	CGame* game = new CGame();

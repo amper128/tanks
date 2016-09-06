@@ -1,6 +1,6 @@
 #include <game/effects.h>
 
-TExplo::TExplo(CVector p, uint8_t dmg, uint8_t id)
+TExplo::TExplo(CVector p, uint8_t /* dmg */, uint8_t /* id */)
 {
 	TextureManager& TexManager = TextureManager::GetInstance();
 	std::string str = "effects/explosion_2.tga";
@@ -44,7 +44,7 @@ void TExplo::step(void)
 
 void TExplo::collide(IObjectStatic* body)
 {
-	body->damage(0, 1);
+	body->damage(0.0f, 1.0f, 0.0f);
 }
 
 bool TExplo::draw(void)
@@ -56,7 +56,7 @@ bool TExplo::draw(void)
 	return true;
 }
 
-TExplo2::TExplo2(CVector p, uint8_t dmg, uint8_t id)
+TExplo2::TExplo2(CVector p, uint8_t /* dmg */, uint8_t /* id */)
 {
 	TextureManager& TexManager = TextureManager::GetInstance();
 	std::string str = "effects/explosion_1.tga";
@@ -78,7 +78,7 @@ void TExplo2::step()
 {
 	this->cur_dmg--;
 
-	if (this->sprite->frame < 15 && this->cur_dmg >= 0) {
+	if (this->sprite->frame < 15 && this->cur_dmg > 0) {
 		this->_tmr++;
 
 		if (this->_tmr >= 10) {
@@ -100,7 +100,7 @@ void TExplo2::step()
 
 void TExplo2::collide(IObjectStatic* body)
 {
-	body->damage(0, 2);
+	body->damage(0.0f, 2.0f, 0.0f);
 //	printf("oops!\n");
 }
 

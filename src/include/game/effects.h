@@ -6,7 +6,7 @@
 class TExplo : public IObjectDynamic
 {
 public:
-	TExplo(CVector pos, uint8_t dmg, uint8_t id);
+	TExplo(CVector pos, uint8_t dmg, uint8_t);
 
 	void step(void);
 	bool draw(void);
@@ -27,7 +27,7 @@ private:
 class TExplo2 : public IObjectDynamic
 {
 public:
-	TExplo2(CVector pos, uint8_t dmg, uint8_t id);
+	TExplo2(CVector pos, uint8_t, uint8_t);
 
 	void step(void);
 	bool draw(void);

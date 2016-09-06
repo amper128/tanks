@@ -32,7 +32,7 @@ void CProjectileBullet::collide(IObjectStatic * coll)
 	{
 		return;
 	}
-	coll->damage(arm_dmg,expl_dmg);
+	coll->damage(arm_dmg, expl_dmg, 0.0f);
 
 //	IObjectStatic* fabric.CreateDynamic();
 /*	CFabric& fabric = CFabric::GetFabric();

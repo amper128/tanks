@@ -71,7 +71,7 @@ void TWeapon::shot()
 	}
 }
 
-TTank::TTank(uint8_t pid, uint8_t typ)
+TTank::TTank(uint8_t pid, uint8_t)
 {
 	TextureManager& TexManager = TextureManager::GetInstance();
 	std::string str;
@@ -105,6 +105,8 @@ TTank::TTank(uint8_t pid, uint8_t typ)
 
 	_alpha = 0;
 	killtime = 1000;
+
+	this->solid = true;
 }
 
 TTank::~TTank()

@@ -43,7 +43,7 @@ std::string GetFileAsString(const std::string& strFileName)
 	while(begin != end)
 		content += *begin++;
 	return content;
-};
+}
 
 
 //это достаточно быстрый алгоритм перевода числа в строку, замена itoa (даже может быстрее работает)
@@ -59,7 +59,7 @@ char* inttostr(int val)
 	}
 	while (val > 0);
 	return res + 1;
-};
+}
 
 char* ftostr(float val)
 {

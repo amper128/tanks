@@ -11,6 +11,8 @@ void CObjectBrick::damage(float dmg1, float dmg2, float dmg3)
 {
 	_health -= dmg1/3.0f;
 	_health -= dmg2/5.0f;
+	_health -= dmg3*0.0f;
+
 	if (_health < 0)
 		destroy();
 	else if (_health < 12.5)

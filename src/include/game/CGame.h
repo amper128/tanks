@@ -41,6 +41,7 @@ private:
 	bool _full;
 //FIXME
 	TTank* tank;
+	TTank* tank2;
 	TFont* font1;
 	TFont* font2;
 

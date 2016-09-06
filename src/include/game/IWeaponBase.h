@@ -12,7 +12,7 @@ class IBaseWeapon : public IObject2D
 {
 public:
 	IBaseWeapon() {}
-	IBaseWeapon(uint8_t pid) {}
+	IBaseWeapon(uint8_t pid) { player_id = pid; }
 
 	void rotation(enum weapon_rotation rot) { this->_rotation = rot; }
 

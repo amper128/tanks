@@ -67,7 +67,7 @@ std::string CXMLConfig::ReadStr(std::string file, std::string path, std::string 
 
 float CXMLConfig::ReadFloat(std::string file, std::string path, std::string attr, float def)
 {
-	return atof(ReadStr(file,path,attr,"0").c_str());
+	return atof(ReadStr(file, path, attr, ftostr(def)).c_str());
 }
 
 int CXMLConfig::ReadInt(std::string file, std::string path, std::string attr, int def)

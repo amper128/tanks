@@ -91,6 +91,7 @@ void CMap::step_objects()
 				if (coll_el != element) {
 					if (DistanceBetweenPoints(body->pos(), coll_body->pos()) <= 256 && coll_body->solid) {
 						if (body->checkCollide(coll_body)) {
+							std::cout << "collide bodies\n" << std::flush;
 							body->collide(coll_body);
 						}
 					}
@@ -106,6 +107,7 @@ void CMap::step_objects()
 					do {
 						coll_body_s = (*coll_el_s);
 						if (body->checkCollide(coll_body_s)) {
+							std::cout << "collide static bodies\n" << std::flush;
 							body->collide(coll_body_s);
 						}
 						coll_el_s++;

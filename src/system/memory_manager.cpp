@@ -7,7 +7,7 @@
 #include <system/memory_manager.h>
 #include <cstdio>
 
-inline CMemoryManager::MemBlock::MemBlock(void): m_size(defsize), m_remain(m_size), m_curr(0)
+/*inline CMemoryManager::MemBlock::MemBlock(void): m_size(defsize), m_remain(m_size), m_curr(0)
 {
 	m_block = new unsigned char[m_size];
 	m_remain = m_size;
@@ -25,12 +25,12 @@ CMemoryManager::MemBlock::~MemBlock(void)
 	delete[] m_block;
 }
 
-inline const size_t CMemoryManager::MemBlock::size(void) const
+inline const size_t CMemoryManager::MemBlock::size(void)
 {
 	return m_size;
 }
 
-inline const size_t CMemoryManager::MemBlock::remaining(void) const
+inline const size_t CMemoryManager::MemBlock::remaining(void)
 {
 	return m_remain;
 }
@@ -107,3 +107,4 @@ CMemoryManager::~CMemoryManager(void)
 {
 	mrproper();
 }
+*/

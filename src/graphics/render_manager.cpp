@@ -27,6 +27,8 @@ CRenderManager::CRenderManager(float w, float h, bool full)
 	glShadeModel(GL_SMOOTH);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
+	full_screen = full;
+
 	queue_len = 0;
 	queue = new job[queue_len];
 
@@ -300,7 +302,7 @@ void CRenderManager::InitShadowBuffer(int w, int h)
 
 }
 
-void CRenderManager::draw(Sprite *tex, CVector pos, CBox size, float angle, float alpha, int blend)
+void CRenderManager::draw(Sprite *tex, CVector pos, CBox size, float angle, float alpha, int /* blend */)
 {
 	if (queue_len + 1 > queue_alloc) {
 		job* tmp;

@@ -97,7 +97,7 @@ int CInputManager::translate_keycode(int key)
 	return key;
 }
 
-void CInputManager::press_key (int key_code, int x, int y)
+void CInputManager::press_key (int key_code, int /*x*/, int /*y*/)
 {
 	int key = translate_keycode(key_code);
 
@@ -123,7 +123,7 @@ void CInputManager::press_key (int key_code, int x, int y)
 //	}
 }
 
-void CInputManager::up_key (int key_code, int x, int y)
+void CInputManager::up_key (int key_code, int /*x*/, int /*y*/)
 {
 	int key = translate_keycode(key_code);
 	keys_down[key] = false;
